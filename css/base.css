@@ -1,0 +1,236 @@
+/* ==========================================================================
+   Splitwise Design Tokens & Base Styles
+   Faithful recreation of secure.splitwise.com design system
+   ========================================================================== */
+
+:root {
+  /* Splitwise Brand Palette */
+  --color-teal: #5bc5a7;
+  --color-teal-hover: #48be9d;
+  --color-teal-dark: #299378;
+  --color-teal-light: #e8f9f4;
+  --color-teal-border: #9de3d1;
+
+  --color-orange: #ff652f;
+  --color-orange-hover: #e55320;
+  --color-orange-dark: #cc3f12;
+  --color-orange-light: #fff2ec;
+  --color-orange-border: #ffb79d;
+
+  /* Neutral & Grayscale */
+  --color-bg-page: #f6f6f6;
+  --color-bg-panel: #ffffff;
+  --color-bg-subtle: #f8f9fa;
+  --color-bg-active: #eef1f3;
+  --color-bg-hover: #f1f3f4;
+  --color-border: #e0e0e0;
+  --color-border-subtle: #eeeeee;
+  --color-border-dark: #cccccc;
+
+  /* Typography Colors */
+  --color-text-main: #333333;
+  --color-text-secondary: #666666;
+  --color-text-muted: #888888;
+  --color-text-light: #aaaaaa;
+  --color-text-white: #ffffff;
+
+  /* Accent & Category Colors */
+  --color-blue: #3280ea;
+  --color-purple: #7a52cc;
+  --color-yellow: #f5a623;
+  --color-red: #e74c3c;
+  --color-navy: #304050;
+
+  /* Sizing & Spacing */
+  --navbar-height: 50px;
+  --sidebar-left-width: 210px;
+  --sidebar-right-width: 250px;
+  --content-max-width: 1040px;
+  --radius-sm: 3px;
+  --radius-md: 5px;
+  --radius-lg: 8px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+  --shadow-modal: 0 12px 36px rgba(0, 0, 0, 0.25);
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+}
+
+/* Reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--color-text-main);
+  background-color: var(--color-bg-page);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Base button reset */
+button {
+  font-family: inherit;
+  font-size: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  outline: none;
+  transition: all var(--transition-fast);
+}
+
+/* Base input reset */
+input, select, textarea {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  outline: none;
+  border: 1px solid var(--color-border-dark);
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  background-color: #fff;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--color-teal);
+  box-shadow: 0 0 0 2px rgba(91, 197, 167, 0.2);
+}
+
+a {
+  color: var(--color-teal);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--color-teal-dark);
+  text-decoration: underline;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+/* Primary buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
+  text-align: center;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.btn-orange {
+  background-color: var(--color-orange);
+  color: #fff;
+  box-shadow: 0 1px 2px rgba(229, 83, 32, 0.3);
+}
+.btn-orange:hover {
+  background-color: var(--color-orange-hover);
+}
+.btn-orange:active {
+  background-color: var(--color-orange-dark);
+  transform: translateY(1px);
+}
+
+.btn-teal {
+  background-color: var(--color-teal);
+  color: #fff;
+  box-shadow: 0 1px 2px rgba(72, 190, 157, 0.3);
+}
+.btn-teal:hover {
+  background-color: var(--color-teal-hover);
+}
+.btn-teal:active {
+  background-color: var(--color-teal-dark);
+  transform: translateY(1px);
+}
+
+.btn-secondary {
+  background-color: #f7f7f7;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+}
+.btn-secondary:hover {
+  background-color: #eee;
+  color: var(--color-text-main);
+}
+
+.btn-text {
+  color: var(--color-text-secondary);
+  padding: 6px 10px;
+}
+.btn-text:hover {
+  color: var(--color-text-main);
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Pill Badges */
+.badge {
+  display: inline-block;
+  padding: 2px 7px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.badge-teal {
+  background-color: var(--color-teal-light);
+  color: var(--color-teal-dark);
+}
+.badge-orange {
+  background-color: var(--color-orange-light);
+  color: var(--color-orange);
+}
+.badge-gray {
+  background-color: #eaeaea;
+  color: #777;
+}
+
+/* Helpers */
+.positive-amount {
+  color: var(--color-teal);
+  font-weight: 700;
+}
+.negative-amount {
+  color: var(--color-orange);
+  font-weight: 700;
+}
+.neutral-amount {
+  color: var(--color-text-muted);
+  font-weight: 700;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Responsive helper */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}

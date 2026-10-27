@@ -1,0 +1,231 @@
+/* ==========================================================================
+   Splitwise Right Sidebar
+   Context-sensitive right panel (balances, simplified debts, members, whiteboard)
+   ========================================================================== */
+
+.right-section-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-text-light);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Dashboard Balance Summary Box */
+.sidebar-balance-card {
+  background-color: var(--color-bg-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+}
+
+.sidebar-balance-heading {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: 6px;
+}
+
+.sidebar-total-sum {
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 6px;
+}
+
+.sidebar-balance-subtext {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+/* Group Balances List (Simplified Debts) */
+.group-debts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.group-debt-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--color-text-main);
+  padding: 6px 8px;
+  background-color: #fafafa;
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--color-teal);
+}
+
+.group-debt-arrow {
+  color: var(--color-text-muted);
+  font-weight: 700;
+}
+
+.group-debt-item strong {
+  font-weight: 600;
+}
+
+/* Group Members List */
+.group-members-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.group-member-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  padding: 4px 0;
+}
+
+.group-member-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.group-member-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.group-member-name {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--color-text-main);
+}
+
+.group-member-balance {
+  font-weight: 700;
+  font-size: 11px;
+}
+
+/* Group Whiteboard Sticky Note */
+.group-whiteboard {
+  background-color: #fef9db;
+  border: 1px solid #fae69e;
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.whiteboard-header {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #bfa12b;
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.whiteboard-content {
+  font-size: 12px;
+  color: #5f5426;
+  white-space: pre-wrap;
+  min-height: 40px;
+}
+
+.whiteboard-textarea {
+  width: 100%;
+  min-height: 60px;
+  font-size: 12px;
+  background-color: #fffef2;
+  border: 1px solid #fae69e;
+  padding: 6px;
+  border-radius: var(--radius-sm);
+  resize: vertical;
+}
+
+/* Splitwise Pro Promo Tile */
+.pro-promo-card {
+  background: linear-gradient(135deg, #48be9d, #299378);
+  color: #fff;
+  border-radius: var(--radius-md);
+  padding: 14px;
+  box-shadow: 0 2px 6px rgba(41, 147, 120, 0.25);
+}
+
+.pro-badge {
+  display: inline-block;
+  background-color: #fff;
+  color: var(--color-teal-dark);
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: var(--radius-full);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.pro-title {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.pro-description {
+  font-size: 11px;
+  line-height: 1.4;
+  opacity: 0.95;
+  margin-bottom: 10px;
+}
+
+.pro-button {
+  background-color: #fff;
+  color: var(--color-teal-dark);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 5px 10px;
+  border-radius: var(--radius-sm);
+  width: 100%;
+  text-align: center;
+}
+
+.pro-button:hover {
+  background-color: #f7f7f7;
+}
+
+/* Quick Group Action Links */
+.sidebar-action-links {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--color-border);
+}
+
+.sidebar-action-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+.sidebar-action-link:hover {
+  color: var(--color-teal);
+  text-decoration: none;
+}

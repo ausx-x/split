@@ -1,0 +1,194 @@
+/* ==========================================================================
+   Splitwise Left Navigation Sidebar
+   ========================================================================== */
+
+.sidebar-nav-section {
+  padding: 0 0 12px;
+}
+
+.nav-link-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  border-left: 5px solid transparent;
+  transition: all var(--transition-fast);
+  text-decoration: none;
+  user-select: none;
+}
+
+.nav-link-item:hover {
+  background-color: var(--color-bg-hover);
+  color: var(--color-text-main);
+  text-decoration: none;
+}
+
+.nav-link-item.active {
+  background-color: var(--color-bg-hover);
+  color: var(--color-teal);
+  font-weight: 700;
+  border-left-color: var(--color-teal);
+}
+
+.nav-link-icon {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+}
+
+.nav-link-item.active .nav-link-icon {
+  color: var(--color-teal);
+}
+
+.nav-link-text {
+  flex: 1;
+}
+
+.nav-badge-count {
+  font-size: 10px;
+  padding: 1px 6px;
+  background-color: #eee;
+  color: var(--color-text-secondary);
+  border-radius: var(--radius-full);
+}
+
+/* Section Headers (GROUPS / FRIENDS) */
+.sidebar-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--color-text-light);
+  text-transform: uppercase;
+}
+
+.sidebar-add-action {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.sidebar-add-action:hover {
+  color: var(--color-teal);
+}
+
+/* Groups List */
+.sidebar-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  border-left: 5px solid transparent;
+  transition: all var(--transition-fast);
+  user-select: none;
+}
+
+.sidebar-item:hover {
+  background-color: var(--color-bg-hover);
+  color: var(--color-text-main);
+}
+
+.sidebar-item.active {
+  background-color: var(--color-bg-hover);
+  color: var(--color-teal);
+  font-weight: 700;
+  border-left-color: var(--color-teal);
+}
+
+.sidebar-item-icon {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  flex-shrink: 0;
+}
+
+.sidebar-item.active .sidebar-item-icon {
+  color: var(--color-teal);
+}
+
+.sidebar-item-avatar {
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.sidebar-item-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sidebar-item-name {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar-item-balance {
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* Sidebar Invite Box */
+.sidebar-invite-box {
+  margin: auto 12px 0;
+  padding: 12px;
+  background-color: var(--color-bg-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.sidebar-invite-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: 6px;
+}
+
+.sidebar-invite-input {
+  width: 100%;
+  font-size: 12px;
+  padding: 5px 8px;
+  margin-bottom: 6px;
+}
+
+.sidebar-invite-btn {
+  width: 100%;
+  font-size: 12px;
+  padding: 5px 0;
+}

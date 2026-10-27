@@ -1,0 +1,429 @@
+/* ==========================================================================
+   Splitwise Top Navigation Bar
+   Exact secure.splitwise.com top navigation styling
+   ========================================================================== */
+
+.app-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  height: var(--navbar-height);
+  background-color: var(--color-teal);
+  color: var(--color-text-white);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navbar-container {
+  width: 100%;
+  max-width: var(--content-max-width);
+  height: 100%;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+/* Brand Logo */
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #fff;
+  text-decoration: none;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.navbar-brand:hover {
+  text-decoration: none;
+  opacity: 0.95;
+}
+
+.brand-icon {
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.brand-icon svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,0.15));
+}
+
+.brand-text {
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  text-transform: lowercase;
+}
+
+/* Center Search */
+.navbar-search {
+  position: relative;
+  flex: 0 1 340px;
+}
+
+.search-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  left: 10px;
+  color: rgba(255, 255, 255, 0.7);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+}
+
+.search-input {
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+  padding: 5px 28px 5px 30px;
+  border-radius: var(--radius-full);
+  font-size: 13px;
+  transition: all var(--transition-fast);
+}
+
+.search-input::placeholder {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.search-input:focus {
+  background-color: #fff;
+  color: var(--color-text-main);
+  border-color: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.search-input:focus ~ .search-icon {
+  color: var(--color-text-muted);
+}
+
+.search-clear-btn {
+  position: absolute;
+  right: 8px;
+  color: rgba(255, 255, 255, 0.7);
+  display: none;
+  cursor: pointer;
+  padding: 2px;
+}
+
+.search-input:focus ~ .search-clear-btn,
+.search-input:not(:placeholder-shown) ~ .search-clear-btn {
+  display: flex;
+}
+
+/* Instant Search Results Dropdown */
+.search-results-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background-color: #fff;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--color-border);
+  max-height: 380px;
+  overflow-y: auto;
+  z-index: 1000;
+  display: none;
+}
+
+.search-results-dropdown.active {
+  display: block;
+}
+
+.search-section-title {
+  padding: 8px 12px 4px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  background-color: var(--color-bg-subtle);
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.search-result-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  cursor: pointer;
+  color: var(--color-text-main);
+  border-bottom: 1px solid var(--color-border-subtle);
+  transition: background-color var(--transition-fast);
+}
+
+.search-result-item:hover {
+  background-color: var(--color-bg-hover);
+}
+
+.search-result-item:last-child {
+  border-bottom: none;
+}
+
+.search-result-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.search-result-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.search-result-title {
+  font-weight: 600;
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.search-result-meta {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+}
+
+/* Navbar Right Actions */
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Notification Bell */
+.notifications-wrapper {
+  position: relative;
+}
+
+.navbar-icon-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  cursor: pointer;
+  position: relative;
+}
+
+.navbar-icon-btn:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.notification-badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 8px;
+  height: 8px;
+  background-color: var(--color-orange);
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--color-teal);
+}
+
+/* Notification Dropdown */
+.notifications-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: -50px;
+  width: 320px;
+  background-color: #fff;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--color-border);
+  z-index: 1000;
+  display: none;
+}
+
+.notifications-dropdown.active {
+  display: block;
+}
+
+.notifications-header {
+  padding: 10px 14px;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--color-text-main);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.notifications-list {
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.notification-item {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--color-border-subtle);
+  font-size: 12px;
+  color: var(--color-text-main);
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.notification-item:hover {
+  background-color: var(--color-bg-hover);
+}
+
+.notification-item.unread {
+  background-color: var(--color-teal-light);
+}
+
+.notification-time {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+
+/* User Menu & Dropdown */
+.user-menu-wrapper {
+  position: relative;
+}
+
+.user-menu-trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #fff;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: var(--radius-md);
+  transition: background-color var(--transition-fast);
+  user-select: none;
+}
+
+.user-menu-trigger:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.user-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  background-color: #ffffff;
+  color: var(--color-teal);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  overflow: hidden;
+}
+
+.user-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.user-name {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.dropdown-chevron {
+  width: 12px;
+  height: 12px;
+  display: flex;
+  align-items: center;
+  transition: transform var(--transition-fast);
+}
+
+.user-menu-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 220px;
+  background-color: #fff;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--color-border);
+  z-index: 1000;
+  display: none;
+  overflow: hidden;
+}
+
+.user-menu-dropdown.active {
+  display: block;
+}
+
+.user-dropdown-header {
+  padding: 12px;
+  border-bottom: 1px solid var(--color-border-subtle);
+  background-color: var(--color-bg-subtle);
+}
+
+.user-dropdown-fullname {
+  font-weight: 700;
+  color: var(--color-text-main);
+  font-size: 13px;
+}
+
+.user-dropdown-email {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+}
+
+.user-menu-list {
+  padding: 4px 0;
+}
+
+.user-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  color: var(--color-text-main);
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.user-menu-item:hover {
+  background-color: var(--color-bg-hover);
+  color: var(--color-teal-dark);
+}
+
+.user-menu-divider {
+  height: 1px;
+  background-color: var(--color-border-subtle);
+  margin: 4px 0;
+}
+
+/* Mobile Toggle */
+.mobile-nav-toggle {
+  display: none;
+  color: #fff;
+  padding: 6px;
+  cursor: pointer;
+}

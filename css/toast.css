@@ -1,0 +1,70 @@
+/* ==========================================================================
+   Toast Notifications & Feedback
+   ========================================================================== */
+
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 2000;
+  pointer-events: none;
+}
+
+.toast {
+  pointer-events: auto;
+  background-color: #333333;
+  color: #ffffff;
+  padding: 12px 18px;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  max-width: 360px;
+  animation: toastSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.toast.toast-teal {
+  background-color: var(--color-teal);
+  color: #fff;
+}
+
+.toast.toast-orange {
+  background-color: var(--color-orange);
+  color: #fff;
+}
+
+.toast-icon {
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.toast-message {
+  flex: 1;
+}
+
+.toast-close {
+  cursor: pointer;
+  opacity: 0.7;
+  font-size: 16px;
+}
+
+.toast-close:hover {
+  opacity: 1;
+}
+
+@keyframes toastSlideIn {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Splitwise - Split expenses with friends</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><path d='M16 2L3 9.5V22.5L16 30L29 22.5V9.5L16 2Z' fill='%235bc5a7'/></svg>" />
+
+  <!-- Splitwise CSS Modules -->
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/navbar.css" />
+  <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/sidebar.css" />
+  <link rel="stylesheet" href="css/main-content.css" />
+  <link rel="stylesheet" href="css/right-sidebar.css" />
+  <link rel="stylesheet" href="css/modals.css" />
+  <link rel="stylesheet" href="css/charts.css" />
+  <link rel="stylesheet" href="css/login.css" />
+  <link rel="stylesheet" href="css/toast.css" />
+</head>
+<body>
+
+  <!-- ========================================================================
+       TOP NAVIGATION BAR
+       ======================================================================== -->
+  <header class="app-navbar">
+    <div class="navbar-container">
+      <!-- Mobile hamburger toggle -->
+      <button class="mobile-nav-toggle" id="mobile-nav-toggle" aria-label="Toggle navigation">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
+
+      <!-- Brand Logo -->
+      <a class="navbar-brand" href="#dashboard">
+        <div class="brand-icon">
+          <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16 2L3 9.5V22.5L16 30L29 22.5V9.5L16 2Z" fill="#ffffff" fill-opacity="0.95"/>
+            <path d="M16 2L3 9.5L16 17L29 9.5L16 2Z" fill="#ffffff"/>
+            <path d="M16 17V30L29 22.5V9.5L16 17Z" fill="#38a688"/>
+            <path d="M16 17L3 9.5V22.5L16 30V17Z" fill="#a4e8d6"/>
+          </svg>
+        </div>
+        <span class="brand-text">splitwise</span>
+      </a>
+
+      <!-- Center Live Search -->
+      <div class="navbar-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </span>
+          <input type="text" id="global-search-input" class="search-input" placeholder="Search expenses, groups, friends..." autocomplete="off" />
+          <span class="search-clear-btn" id="search-clear-btn" title="Clear">&times;</span>
+        </div>
+        <!-- Search autocomplete results popup -->
+        <div class="search-results-dropdown" id="search-results-dropdown"></div>
+      </div>
+
+      <!-- Right Actions: Notifications & Profile -->
+      <div class="navbar-actions">
+        <!-- Notifications Bell -->
+        <div class="notifications-wrapper">
+          <button class="navbar-icon-btn" id="btn-toggle-notifications" title="Notifications" aria-label="Notifications">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+            <span class="notification-badge"></span>
+          </button>
+          <!-- Notifications Dropdown -->
+          <div class="notifications-dropdown" id="notifications-dropdown">
+            <div class="notifications-header">
+              <span>Notifications</span>
+              <span class="badge badge-teal" style="font-size:10px;">Recent</span>
+            </div>
+            <div class="notifications-list" id="notifications-list"></div>
+          </div>
+        </div>
+
+        <!-- User Profile Dropdown -->
+        <div class="user-menu-wrapper">
+          <div class="user-menu-trigger" id="user-menu-trigger">
+            <div class="user-avatar" style="background-color: #ffffff; color: var(--color-teal); font-weight:800;">
+              AM
+            </div>
+            <span class="user-name">Alex Morgan</span>
+            <span class="dropdown-chevron">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </span>
+          </div>
+          <!-- Dropdown List -->
+          <div class="user-menu-dropdown" id="user-menu-dropdown">
+            <div class="user-dropdown-header">
+              <div class="user-dropdown-fullname">Alex Morgan</div>
+              <div class="user-dropdown-email">alex.morgan@example.com</div>
+            </div>
+            <div class="user-menu-list">
+              <div class="user-menu-item" id="menu-create-group">
+                <span>➕</span>
+                <span>Create a group</span>
+              </div>
+              <div class="user-menu-item" id="menu-rent-calc">
+                <span>🏠</span>
+                <span>Fairness rent calculator</span>
+              </div>
+              <div class="user-menu-item" id="menu-charts">
+                <span>📊</span>
+                <span>Spending analytics</span>
+              </div>
+              <div class="user-menu-divider"></div>
+              <div class="user-menu-item" id="menu-toggle-login">
+                <span>🔑</span>
+                <span>View Splitwise Login Page</span>
+              </div>
+              <div class="user-menu-item" id="menu-reset-data" style="color:var(--color-orange);">
+                <span>🔄</span>
+                <span>Reset Demo Data</span>
+              </div>
+              <div class="user-menu-divider"></div>
+              <div class="user-menu-item" onclick="alert('You are logged in as Alex Morgan in demo mode.');">
+                <span>🚪</span>
+                <span>Log out</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Drawer Backdrop -->
+  <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+  <!-- ========================================================================
+       MAIN 3-COLUMN APPLICATION LAYOUT
+       ======================================================================== -->
+  <main class="app-wrapper">
+    <div class="app-container">
+
+      <!-- LEFT SIDEBAR -->
+      <aside class="app-sidebar-left" id="app-sidebar-left">
+        <!-- Main views links -->
+        <div class="sidebar-nav-section">
+          <a href="#dashboard" class="nav-link-item active" data-view="dashboard">
+            <span class="nav-link-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" y1="22" x2="4" y2="15"></line></svg>
+            </span>
+            <span class="nav-link-text">Dashboard</span>
+          </a>
+
+          <a href="#activity" class="nav-link-item" data-view="activity">
+            <span class="nav-link-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+            </span>
+            <span class="nav-link-text">Recent activity</span>
+          </a>
+
+          <a href="#all-expenses" class="nav-link-item" data-view="all-expenses">
+            <span class="nav-link-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+            </span>
+            <span class="nav-link-text">All expenses</span>
+            <span class="nav-badge-count" id="nav-badge-expenses-count">6</span>
+          </a>
+        </div>
+
+        <!-- GROUPS SECTION -->
+        <div class="sidebar-group-header">
+          <span>GROUPS</span>
+          <span class="sidebar-add-action" id="sidebar-add-group-btn">+ add</span>
+        </div>
+        <div class="sidebar-list" id="sidebar-groups-list"></div>
+
+        <!-- FRIENDS SECTION -->
+        <div class="sidebar-group-header" style="margin-top:12px;">
+          <span>FRIENDS</span>
+          <span class="sidebar-add-action" id="sidebar-add-friend-btn">+ add</span>
+        </div>
+        <div class="sidebar-list" id="sidebar-friends-list"></div>
+
+        <!-- INVITE FRIENDS BOTTOM BOX -->
+        <div class="sidebar-invite-box">
+          <div class="sidebar-invite-title">Invite friends</div>
+          <input type="email" id="sidebar-invite-email" class="sidebar-invite-input" placeholder="Enter an email address" />
+          <button class="btn btn-teal sidebar-invite-btn" id="sidebar-invite-submit">Send invite</button>
+        </div>
+      </aside>
+
+      <!-- CENTER CONTENT AREA -->
+      <section class="app-main-content" id="app-main-content">
+        <!-- Rendered dynamically by views -->
+      </section>
+
+      <!-- RIGHT SIDEBAR -->
+      <aside class="app-sidebar-right" id="app-sidebar-right">
+        <!-- Rendered dynamically context-specifically -->
+      </aside>
+
+    </div>
+  </main>
+
+  <!-- ========================================================================
+       MODALS & DIALOGS
+       ======================================================================== -->
+
+  <!-- 1. ADD / EDIT EXPENSE MODAL -->
+  <div class="modal-overlay" id="add-expense-modal">
+    <div class="modal-container">
+      <div class="modal-header">
+        <span class="modal-title">Add an expense</span>
+        <span class="modal-close-btn">&times;</span>
+      </div>
+      <div class="modal-body">
+        <!-- Rendered dynamically by AddExpenseModal -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="btn-cancel-expense">Cancel</button>
+        <button type="button" class="btn btn-teal" id="btn-save-expense">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. SETTLE UP MODAL -->
+  <div class="modal-overlay" id="settle-up-modal">
+    <div class="modal-container" style="max-width: 420px;">
+      <div class="modal-header">
+        <span class="modal-title">Settle up</span>
+        <span class="modal-close-btn">&times;</span>
+      </div>
+      <div class="modal-body">
+        <!-- Rendered dynamically by SettleUpModal -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="btn-cancel-settle">Cancel</button>
+        <button type="button" class="btn btn-teal" id="btn-save-settle">Record payment</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. CREATE GROUP MODAL -->
+  <div class="modal-overlay" id="create-group-modal">
+    <div class="modal-container" style="max-width: 440px;">
+      <div class="modal-header">
+        <span class="modal-title">Start a new group</span>
+        <span class="modal-close-btn">&times;</span>
+      </div>
+      <div class="modal-body">
+        <!-- Rendered by GroupModal -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="btn-cancel-group">Cancel</button>
+        <button type="button" class="btn btn-teal" id="btn-save-group">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. ADD FRIEND MODAL -->
+  <div class="modal-overlay" id="add-friend-modal">
+    <div class="modal-container" style="max-width: 380px;">
+      <div class="modal-header">
+        <span class="modal-title">Add a friend</span>
+        <span class="modal-close-btn">&times;</span>
+      </div>
+      <div class="modal-body">
+        <div style="margin-bottom:12px;">
+          <label class="field-label">Friend's Full Name</label>
+          <input type="text" id="new-friend-name" class="expense-field-input" placeholder="e.g. Jordan Smith" />
+        </div>
+        <div>
+          <label class="field-label">Email Address</label>
+          <input type="email" id="new-friend-email" class="expense-field-input" placeholder="jordan@example.com" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="btn-cancel-friend">Cancel</button>
+        <button type="button" class="btn btn-teal" id="btn-save-friend">Add Friend</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       SPLITWISE AUTH / LOGIN SCREEN (RECREATION OF secure.splitwise.com/login)
+       ======================================================================== -->
+  <div class="login-page-wrapper" id="login-page-wrapper">
+    <div class="login-close-corner" id="btn-close-login">
+      ✕ Back to App
+    </div>
+
+    <div class="login-card">
+      <div class="login-brand-header">
+        <div class="login-brand-logo">
+          <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16 2L3 9.5V22.5L16 30L29 22.5V9.5L16 2Z" fill="#5bc5a7"/>
+            <path d="M16 2L3 9.5L16 17L29 9.5L16 2Z" fill="#48be9d"/>
+            <path d="M16 17V30L29 22.5V9.5L16 17Z" fill="#38a688"/>
+            <path d="M16 17L3 9.5V22.5L16 30V17Z" fill="#69cfb3"/>
+          </svg>
+          <span>splitwise</span>
+        </div>
+        <h2 class="login-title">Log in</h2>
+      </div>
+
+      <form class="login-form" onsubmit="event.preventDefault(); document.getElementById('login-page-wrapper').classList.remove('active'); UI.showToast('Logged in as Alex Morgan!');">
+        <div class="login-field-group">
+          <label class="login-field-label">Email address</label>
+          <input type="email" class="login-field-input" value="alex.morgan@example.com" required />
+        </div>
+
+        <div class="login-field-group">
+          <label class="login-field-label">Password</label>
+          <input type="password" class="login-field-input" value="••••••••••••" required />
+        </div>
+
+        <button type="submit" class="login-submit-btn">Log in</button>
+      </form>
+
+      <div class="login-divider">
+        <span>or</span>
+      </div>
+
+      <button type="button" class="btn-google-login" onclick="document.getElementById('login-page-wrapper').classList.remove('active'); UI.showToast('Authenticated via Google!');">
+        <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
+        Sign in with Google
+      </button>
+
+      <div class="login-footer-links">
+        <a href="#" onclick="alert('Password reset link sent to demo account.'); return false;">Forgot your password?</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container"></div>
+
+  <!-- ========================================================================
+       JAVASCRIPT MODULES
+       ======================================================================== -->
+  <script src="js/seed.js"></script>
+  <script src="js/state.js"></script>
+  <script src="js/ui-helpers.js"></script>
+  <script src="js/views/dashboard-view.js"></script>
+  <script src="js/views/activity-view.js"></script>
+  <script src="js/views/expenses-view.js"></script>
+  <script src="js/views/group-view.js"></script>
+  <script src="js/views/friend-view.js"></script>
+  <script src="js/views/charts-view.js"></script>
+  <script src="js/views/rent-calc-view.js"></script>
+  <script src="js/modals/add-expense.js"></script>
+  <script src="js/modals/settle-up.js"></script>
+  <script src="js/modals/group-modal.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

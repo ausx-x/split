@@ -1,0 +1,194 @@
+/* ==========================================================================
+   Splitwise Charts, Visual Analytics & Fairness Calculator Views
+   ========================================================================== */
+
+/* Charts Container */
+.charts-view-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.chart-card {
+  background-color: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 18px;
+}
+
+.chart-card-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text-main);
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Category Visual Progress Bars */
+.category-bars-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.category-bar-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.category-bar-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+}
+
+.category-bar-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+}
+
+.category-bar-amount {
+  font-weight: 700;
+}
+
+.category-bar-track {
+  height: 10px;
+  background-color: #eee;
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.category-bar-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width 0.6s ease;
+}
+
+/* Monthly Spend Histogram */
+.histogram-container {
+  display: flex;
+  align-items: flex-end;
+  height: 160px;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.histogram-bar-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.histogram-bar-pill {
+  width: 100%;
+  max-width: 44px;
+  background-color: var(--color-teal);
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  transition: height 0.5s ease;
+  position: relative;
+}
+
+.histogram-bar-pill:hover {
+  background-color: var(--color-teal-hover);
+}
+
+.histogram-bar-amount {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+}
+
+.histogram-bar-label {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   FAIRNESS RENT CALCULATOR
+   -------------------------------------------------------------------------- */
+.calculator-container {
+  background-color: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 20px;
+}
+
+.calculator-hero {
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 16px;
+  margin-bottom: 20px;
+}
+
+.calculator-hero h2 {
+  font-size: 18px;
+  color: var(--color-text-main);
+  margin-bottom: 4px;
+}
+
+.calculator-hero p {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+.calc-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.calc-room-card {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  background-color: var(--color-bg-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.calc-room-title {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--color-teal-dark);
+  display: flex;
+  justify-content: space-between;
+}
+
+.calc-results-box {
+  background-color: var(--color-teal-light);
+  border: 1px solid var(--color-teal-border);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  margin-top: 20px;
+}
+
+.calc-results-title {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--color-teal-dark);
+  margin-bottom: 10px;
+}
+
+.calc-split-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px dashed rgba(91, 197, 167, 0.4);
+  font-size: 13px;
+}
+
+.calc-split-row:last-child {
+  border-bottom: none;
+}

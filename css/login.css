@@ -1,0 +1,157 @@
+/* ==========================================================================
+   Splitwise Login & Authentication View
+   Exact clone of secure.splitwise.com/login view
+   ========================================================================== */
+
+.login-page-wrapper {
+  position: fixed;
+  inset: 0;
+  background-color: #ffffff;
+  z-index: 1200;
+  overflow-y: auto;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+}
+
+.login-page-wrapper.active {
+  display: flex;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 400px;
+  background-color: #ffffff;
+  padding: 32px;
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--color-border);
+}
+
+.login-brand-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.login-brand-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--color-teal);
+  margin-bottom: 8px;
+}
+
+.login-brand-logo svg {
+  width: 36px;
+  height: 36px;
+}
+
+.login-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-text-main);
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.login-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.login-field-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.login-field-input {
+  font-size: 14px;
+  padding: 10px 12px;
+}
+
+.login-submit-btn {
+  background-color: var(--color-teal);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  margin-top: 6px;
+}
+
+.login-submit-btn:hover {
+  background-color: var(--color-teal-hover);
+}
+
+.login-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 12px;
+  margin: 16px 0;
+}
+
+.login-divider::before,
+.login-divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.login-divider span {
+  padding: 0 10px;
+}
+
+.btn-google-login {
+  background-color: #fff;
+  border: 1px solid var(--color-border-dark);
+  color: var(--color-text-main);
+  font-weight: 600;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 13px;
+}
+
+.btn-google-login:hover {
+  background-color: var(--color-bg-hover);
+}
+
+.login-footer-links {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+.login-close-corner {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-teal);
+  cursor: pointer;
+  background-color: var(--color-teal-light);
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+}
+
+.login-close-corner:hover {
+  background-color: var(--color-teal);
+  color: #fff;
+}

@@ -1,0 +1,105 @@
+/* ==========================================================================
+   Splitwise 3-Column Layout Architecture
+   Faithful to secure.splitwise.com desktop and responsive view
+   ========================================================================== */
+
+.app-wrapper {
+  min-height: calc(100vh - var(--navbar-height));
+  display: flex;
+  justify-content: center;
+  background-color: var(--color-bg-page);
+  padding: 16px 8px 40px;
+}
+
+.app-container {
+  width: 100%;
+  max-width: var(--content-max-width);
+  background-color: var(--color-bg-panel);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--color-border);
+  display: grid;
+  grid-template-columns: var(--sidebar-left-width) minmax(440px, 1fr) var(--sidebar-right-width);
+  min-height: 700px;
+}
+
+/* Left Sidebar Area */
+.app-sidebar-left {
+  border-right: 1px solid var(--color-border);
+  background-color: #fff;
+  padding: 16px 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Center Content Area */
+.app-main-content {
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* Right Sidebar Area */
+.app-sidebar-right {
+  border-left: 1px solid var(--color-border);
+  background-color: #fff;
+  padding: 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Mobile backdrop */
+.sidebar-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 90;
+}
+
+/* Responsive adjustments */
+@media (max-width: 960px) {
+  .app-container {
+    grid-template-columns: var(--sidebar-left-width) 1fr;
+  }
+  .app-sidebar-right {
+    display: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .app-wrapper {
+    padding: 0;
+  }
+  .app-container {
+    grid-template-columns: 1fr;
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
+  }
+  .mobile-nav-toggle {
+    display: flex;
+  }
+  .app-sidebar-left {
+    position: fixed;
+    top: var(--navbar-height);
+    bottom: 0;
+    left: 0;
+    width: 260px;
+    z-index: 95;
+    transform: translateX(-100%);
+    transition: transform var(--transition-normal);
+    box-shadow: 2px 0 10px rgba(0,0,0,0.15);
+  }
+  .app-sidebar-left.open {
+    transform: translateX(0);
+  }
+  .sidebar-backdrop.active {
+    display: block;
+  }
+  .navbar-search {
+    display: none;
+  }
+}
