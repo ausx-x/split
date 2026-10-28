@@ -178,6 +178,17 @@ const ExpensesView = {
             }).join("")}
           </div>
 
+          ${exp.receipt ? `
+            <div style="margin-bottom:16px; background:#fff; border:1px solid var(--color-border); border-radius:var(--radius-sm); padding:12px;">
+              <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--color-text-muted); margin-bottom:8px;">
+                📎 Payment Screenshot / Proof
+              </div>
+              <a href="${exp.receipt}" target="_blank" title="Click to view full image">
+                <img src="${exp.receipt}" alt="Payment Proof" style="max-height:160px; max-width:100%; border-radius:4px; border:1px solid var(--color-border); object-fit:contain; box-shadow:0 1px 4px rgba(0,0,0,0.08);" />
+              </a>
+            </div>
+          ` : ''}
+
           <!-- Comments Section -->
           <div class="expense-comments-section">
             <div class="comments-title">Comments & Activity</div>

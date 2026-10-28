@@ -71,9 +71,10 @@ A high-fidelity clone of the layout, design system, and interactive features of 
   - Date picker, group selector, and notes memo.
 
 - **"Settle Up" Modal:**
-  - Method selector: **Record a cash payment**, **Venmo**, and **PayPal**.
+  - Method selector: **Record Cash**, **UPI** (with custom UPI ID, UTR reference, and payment screenshot upload), and **Card Payment** (with card brand indicators and simulated secure 256-bit encryption).
   - Visual transaction flow (Payer avatar ➔ Recipient avatar).
   - Amount input prefilled with current net balance.
+  - Attached payment proof / screenshot viewable directly inside the expense detail drawer.
 
 - **"Start a New Group" Modal:**
   - Group name, group category (Trip, Home, Couple, Other), and member selection checkboxes.

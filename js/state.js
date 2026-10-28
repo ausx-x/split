@@ -336,9 +336,19 @@ class SplitwiseState {
   /**
    * Settle debt by creating a settlement transaction
    */
-  settleDebt(payerId, recipientId, amount, method = "cash", groupId = null) {
+  settleDebt(payerId, recipientId, amount, method = "cash", groupId = null, extraData = {}) {
     const payer = this.getUser(payerId);
     const recipient = this.getUser(recipientId);
+
+    let defaultNote = `Recorded payment via ${method.toUpperCase()}`;
+    if (method === "upi") {
+      const upiIdStr = extraData.upiId ? ` (${extraData.upiId})` : "";
+      const utrStr = extraData.utr ? ` · Ref/UTR: ${extraData.utr}` : "";
+      defaultNote = `Recorded payment via UPI${upiIdStr}${utrStr}`;
+    } else if (method === "card") {
+      const last4 = extraData.cardLast4 ? ` (ending in ${extraData.cardLast4})` : "";
+      defaultNote = `Recorded payment via Card${last4}`;
+    }
 
     const settlementExpense = {
       id: "exp-" + Date.now(),
@@ -346,7 +356,7 @@ class SplitwiseState {
       category: "general",
       amount: Number(amount),
       currency: "USD",
-      date: new Date().toISOString().split("T")[0],
+      date: extraData.date || new Date().toISOString().split("T")[0],
       groupId: groupId,
       isSettlement: true,
       payerId: payerId,
@@ -354,8 +364,8 @@ class SplitwiseState {
       splits: [
         { userId: recipientId, amount: Number(amount) }
       ],
-      notes: `Recorded payment via ${method.toUpperCase()}`,
-      receipt: null,
+      notes: extraData.notes || defaultNote,
+      receipt: extraData.receipt || null,
       comments: [],
       createdAt: new Date().toISOString()
     };
@@ -364,7 +374,7 @@ class SplitwiseState {
 
     this.addNotification({
       userId: payerId,
-      message: `${payer.shortName} paid ${recipient.shortName} $${Number(amount).toFixed(2)}`,
+      message: `${payer.shortName} paid ${recipient.shortName} $${Number(amount).toFixed(2)} via ${method.toUpperCase()}`,
       time: "Just now",
       unread: false
     });
@@ -372,6 +382,7 @@ class SplitwiseState {
     this.saveState();
     return settlementExpense;
   }
+
 
   addGroup(groupData) {
     const newGroup = {
