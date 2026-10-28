@@ -585,3 +585,97 @@
     border-bottom: 1px solid var(--color-border);
   }
 }
+
+/* --------------------------------------------------------------------------
+   DEEP FILTER TOOLBAR & EXPORT BUTTONS (NATIVE PRO)
+   -------------------------------------------------------------------------- */
+.filter-toolbar {
+  background-color: var(--color-bg-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.filter-row-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.filter-search-box {
+  flex: 1;
+  min-width: 180px;
+  position: relative;
+}
+
+.filter-search-input {
+  width: 100%;
+  font-size: 12px;
+  padding: 5px 8px 5px 26px;
+}
+
+.filter-search-icon {
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-muted);
+  font-size: 11px;
+}
+
+.filter-select {
+  font-size: 12px;
+  padding: 5px 8px;
+}
+
+.filter-category-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.filter-pill {
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  background: #fff;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  user-select: none;
+}
+
+.filter-pill:hover {
+  background-color: var(--color-bg-hover);
+}
+
+.filter-pill.active {
+  background-color: var(--color-teal);
+  color: #fff;
+  border-color: var(--color-teal);
+  font-weight: 600;
+}
+
+.export-actions-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background-color: #fafafa;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border-subtle);
+  margin-bottom: 16px;
+  font-size: 12px;
+}
+
+.export-btn-group {
+  display: flex;
+  gap: 6px;
+}
+

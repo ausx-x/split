@@ -169,28 +169,46 @@ const RentCalcView = {
     });
 
     // Save as rent expense
-    container.querySelector("#btn-apply-rent-expense").addEventListener("click", () => {
+    container.querySelector("#btn-apply-rent-expense").addEventListener("click", async () => {
       if (!lastCalculated) return;
-      const aptGroup = state.getGroup("group-1");
+      const groups = state.getGroups();
+      if (!groups || groups.length === 0) {
+        alert("Please create or join a group first to log a shared rent expense.");
+        return;
+      }
+
+      const targetGroup = groups[0];
       const currentUserId = state.getCurrentUser().id;
+      const members = targetGroup.members && targetGroup.members.length >= 3
+        ? targetGroup.members.slice(0, 3).map(m => m.id)
+        : [currentUserId, ...(state.getFriends().slice(0, 2).map(f => f.id))];
 
-      state.addExpense({
-        description: "Monthly Apartment Rent (Fairness Split)",
-        category: "rent",
-        amount: lastCalculated.totalRent,
-        groupId: "group-1",
-        payerId: currentUserId,
-        splitType: "exact",
-        splits: [
-          { userId: "user-1", amount: Number(lastCalculated.share1.toFixed(2)) },
-          { userId: "user-2", amount: Number(lastCalculated.share2.toFixed(2)) },
-          { userId: "user-3", amount: Number(lastCalculated.share3.toFixed(2)) }
-        ],
-        notes: "Generated via Splitwise Fairness Rent Calculator"
-      });
+      if (members.length < 3) {
+        alert("You need at least 3 participants (friends or group members) to split a 3-room apartment.");
+        return;
+      }
 
-      UI.showToast("Monthly rent split logged to Apartment 4B!");
-      window.SplitwiseApp.navigateTo("group", "group-1");
+      try {
+        await state.addExpense({
+          description: "Monthly Rent (Fairness Calculator Split)",
+          category: "rent",
+          amount: lastCalculated.totalRent,
+          group_id: targetGroup.id,
+          payer_id: currentUserId,
+          split_type: "exact",
+          splits: [
+            { user_id: members[0], amount: Number(lastCalculated.share1.toFixed(2)) },
+            { user_id: members[1], amount: Number(lastCalculated.share2.toFixed(2)) },
+            { user_id: members[2], amount: Number(lastCalculated.share3.toFixed(2)) }
+          ],
+          notes: "Generated via Splitwise Fairness Rent Calculator"
+        });
+
+        UI.showToast(`Monthly rent split logged to ${targetGroup.name}!`);
+        window.SplitwiseApp.navigateTo("group", targetGroup.id);
+      } catch (err) {
+        alert("Error saving rent expense: " + err.message);
+      }
     });
   }
 };

@@ -77,10 +77,10 @@
         <!-- User Profile Dropdown -->
         <div class="user-menu-wrapper">
           <div class="user-menu-trigger" id="user-menu-trigger">
-            <div class="user-avatar" style="background-color: #ffffff; color: var(--color-teal); font-weight:800;">
+            <div class="user-avatar" id="navbar-user-avatar" style="background-color: #ffffff; color: var(--color-teal); font-weight:800;">
               AM
             </div>
-            <span class="user-name">Alex Morgan</span>
+            <span class="user-name" id="navbar-user-name">Alex Morgan</span>
             <span class="dropdown-chevron">
               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
             </span>
@@ -88,8 +88,8 @@
           <!-- Dropdown List -->
           <div class="user-menu-dropdown" id="user-menu-dropdown">
             <div class="user-dropdown-header">
-              <div class="user-dropdown-fullname">Alex Morgan</div>
-              <div class="user-dropdown-email">alex.morgan@example.com</div>
+              <div class="user-dropdown-fullname" id="dropdown-user-fullname">Alex Morgan</div>
+              <div class="user-dropdown-email" id="dropdown-user-email">alex.morgan@example.com</div>
             </div>
             <div class="user-menu-list">
               <div class="user-menu-item" id="menu-create-group">
@@ -105,16 +105,7 @@
                 <span>Spending analytics</span>
               </div>
               <div class="user-menu-divider"></div>
-              <div class="user-menu-item" id="menu-toggle-login">
-                <span>🔑</span>
-                <span>View Splitwise Login Page</span>
-              </div>
-              <div class="user-menu-item" id="menu-reset-data" style="color:var(--color-orange);">
-                <span>🔄</span>
-                <span>Reset Demo Data</span>
-              </div>
-              <div class="user-menu-divider"></div>
-              <div class="user-menu-item" onclick="alert('You are logged in as Alex Morgan in demo mode.');">
+              <div class="user-menu-item" id="menu-logout">
                 <span>🚪</span>
                 <span>Log out</span>
               </div>
@@ -276,10 +267,10 @@
   </div>
 
   <!-- ========================================================================
-       SPLITWISE AUTH / LOGIN SCREEN (RECREATION OF secure.splitwise.com/login)
+       SPLITWISE AUTH / LOGIN & SIGN UP SCREEN
        ======================================================================== -->
   <div class="login-page-wrapper" id="login-page-wrapper">
-    <div class="login-close-corner" id="btn-close-login">
+    <div class="login-close-corner" id="btn-close-login" style="display:none;">
       ✕ Back to App
     </div>
 
@@ -294,34 +285,75 @@
           </svg>
           <span>splitwise</span>
         </div>
-        <h2 class="login-title">Log in</h2>
+        <h2 class="login-title" id="auth-modal-title">Welcome to Splitwise</h2>
       </div>
 
-      <form class="login-form" onsubmit="event.preventDefault(); document.getElementById('login-page-wrapper').classList.remove('active'); UI.showToast('Logged in as Alex Morgan!');">
+      <!-- Auth Navigation Tabs -->
+      <div class="auth-tabs-header">
+        <button type="button" class="auth-tab-btn active" id="auth-tab-login">Log In</button>
+        <button type="button" class="auth-tab-btn" id="auth-tab-signup">Sign Up</button>
+      </div>
+
+      <!-- Error Message Banner -->
+      <div class="auth-error-banner" id="auth-error-msg"></div>
+
+      <!-- Log In Form -->
+      <form class="login-form" id="login-form">
         <div class="login-field-group">
           <label class="login-field-label">Email address</label>
-          <input type="email" class="login-field-input" value="alex.morgan@example.com" required />
+          <input type="email" id="login-email" class="login-field-input" placeholder="you@example.com" required autocomplete="email" />
         </div>
 
         <div class="login-field-group">
           <label class="login-field-label">Password</label>
-          <input type="password" class="login-field-input" value="••••••••••••" required />
+          <input type="password" id="login-password" class="login-field-input" placeholder="Enter password" required autocomplete="current-password" />
         </div>
 
-        <button type="submit" class="login-submit-btn">Log in</button>
+        <button type="submit" class="login-submit-btn" id="btn-submit-login">Log in</button>
       </form>
 
-      <div class="login-divider">
-        <span>or</span>
-      </div>
+      <!-- Sign Up Form -->
+      <form class="login-form hidden" id="signup-form">
+        <div class="login-field-group">
+          <label class="login-field-label">Full Name</label>
+          <input type="text" id="signup-name" class="login-field-input" placeholder="e.g. Alex Morgan" required autocomplete="name" />
+        </div>
 
-      <button type="button" class="btn-google-login" onclick="document.getElementById('login-page-wrapper').classList.remove('active'); UI.showToast('Authenticated via Google!');">
-        <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
-        Sign in with Google
-      </button>
+        <div class="login-field-group">
+          <label class="login-field-label">Email address</label>
+          <input type="email" id="signup-email" class="login-field-input" placeholder="alex@example.com" required autocomplete="email" />
+        </div>
 
-      <div class="login-footer-links">
-        <a href="#" onclick="alert('Password reset link sent to demo account.'); return false;">Forgot your password?</a>
+        <div class="login-field-group">
+          <label class="login-field-label">Password</label>
+          <input type="password" id="signup-password" class="login-field-input" placeholder="At least 6 characters" minlength="6" required autocomplete="new-password" />
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+          <div class="login-field-group">
+            <label class="login-field-label">Currency</label>
+            <select id="signup-currency" class="login-field-input" style="background:#fff;">
+              <option value="USD">USD ($)</option>
+              <option value="INR">INR (₹)</option>
+              <option value="EUR">EUR (€)</option>
+              <option value="GBP">GBP (£)</option>
+              <option value="CAD">CAD ($)</option>
+              <option value="AUD">AUD ($)</option>
+              <option value="JPY">JPY (¥)</option>
+            </select>
+          </div>
+
+          <div class="login-field-group">
+            <label class="login-field-label">UPI ID (Optional)</label>
+            <input type="text" id="signup-upi" class="login-field-input" placeholder="name@okhdfc" />
+          </div>
+        </div>
+
+        <button type="submit" class="login-submit-btn" id="btn-submit-signup">Create Account</button>
+      </form>
+
+      <div class="login-footer-links" style="margin-top:20px;">
+        <span id="auth-switch-prompt">Don't have an account? <a id="link-switch-to-signup">Sign up</a></span>
       </div>
     </div>
   </div>

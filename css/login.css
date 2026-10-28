@@ -1,12 +1,11 @@
 /* ==========================================================================
    Splitwise Login & Authentication View
-   Exact clone of secure.splitwise.com/login view
    ========================================================================== */
 
 .login-page-wrapper {
   position: fixed;
   inset: 0;
-  background-color: #ffffff;
+  background-color: #f6f6f6;
   z-index: 1200;
   overflow-y: auto;
   display: none;
@@ -22,7 +21,7 @@
 
 .login-card {
   width: 100%;
-  max-width: 400px;
+  max-width: 440px;
   background-color: #ffffff;
   padding: 32px;
   border-radius: var(--radius-md);
@@ -32,7 +31,7 @@
 
 .login-brand-header {
   text-align: center;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 .login-brand-logo {
@@ -51,32 +50,84 @@
 }
 
 .login-title {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
   color: var(--color-text-main);
+}
+
+/* Auth Navigation Tabs */
+.auth-tabs-header {
+  display: flex;
+  border-bottom: 2px solid var(--color-border-subtle);
+  margin-bottom: 20px;
+}
+
+.auth-tab-btn {
+  flex: 1;
+  padding: 10px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-align: center;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: all var(--transition-fast);
+}
+
+.auth-tab-btn:hover {
+  color: var(--color-text-main);
+}
+
+.auth-tab-btn.active {
+  color: var(--color-teal);
+  border-bottom-color: var(--color-teal);
+  font-weight: 700;
+}
+
+/* Error message banner */
+.auth-error-banner {
+  background-color: #fff2f0;
+  border: 1px solid #ffccc7;
+  color: #cf1322;
+  font-size: 13px;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 16px;
+  display: none;
+}
+
+.auth-error-banner.visible {
+  display: block;
 }
 
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
 }
 
 .login-field-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
 }
 
 .login-field-label {
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
   color: var(--color-text-secondary);
 }
 
 .login-field-input {
   font-size: 14px;
-  padding: 10px 12px;
+  padding: 9px 12px;
+  border: 1px solid var(--color-border-dark);
+  border-radius: var(--radius-sm);
+}
+
+.login-field-input:focus {
+  border-color: var(--color-teal);
 }
 
 .login-submit-btn {
@@ -84,74 +135,25 @@
   color: #fff;
   font-size: 15px;
   font-weight: 700;
-  padding: 12px;
+  padding: 11px;
   border-radius: var(--radius-sm);
   margin-top: 6px;
+  transition: background-color var(--transition-fast);
 }
 
 .login-submit-btn:hover {
   background-color: var(--color-teal-hover);
 }
 
-.login-divider {
-  display: flex;
-  align-items: center;
-  text-align: center;
-  color: var(--color-text-muted);
-  font-size: 12px;
-  margin: 16px 0;
-}
-
-.login-divider::before,
-.login-divider::after {
-  content: '';
-  flex: 1;
-  border-bottom: 1px solid var(--color-border);
-}
-
-.login-divider span {
-  padding: 0 10px;
-}
-
-.btn-google-login {
-  background-color: #fff;
-  border: 1px solid var(--color-border-dark);
-  color: var(--color-text-main);
-  font-weight: 600;
-  padding: 10px 12px;
-  border-radius: var(--radius-sm);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  font-size: 13px;
-}
-
-.btn-google-login:hover {
-  background-color: var(--color-bg-hover);
-}
-
 .login-footer-links {
-  margin-top: 20px;
+  margin-top: 18px;
   text-align: center;
   font-size: 13px;
   color: var(--color-text-secondary);
 }
 
-.login-close-corner {
-  position: absolute;
-  top: 20px;
-  right: 24px;
-  font-size: 13px;
-  font-weight: 600;
+.login-footer-links a {
   color: var(--color-teal);
+  font-weight: 600;
   cursor: pointer;
-  background-color: var(--color-teal-light);
-  padding: 6px 12px;
-  border-radius: var(--radius-full);
-}
-
-.login-close-corner:hover {
-  background-color: var(--color-teal);
-  color: #fff;
 }

@@ -423,7 +423,7 @@ const SettleUpModal = {
     this.modalEl.querySelector(".modal-close-btn").addEventListener("click", () => this.close());
     this.modalEl.querySelector("#btn-cancel-settle").addEventListener("click", () => this.close());
 
-    this.modalEl.querySelector("#btn-save-settle").addEventListener("click", () => {
+    this.modalEl.querySelector("#btn-save-settle").addEventListener("click", async () => {
       this.syncCurrentInputs();
 
       const amtInput = this.modalEl.querySelector("#settle-amount-input");
@@ -455,16 +455,20 @@ const SettleUpModal = {
         extraData.cardLast4 = last4;
       }
 
-      store.settleDebt(this.payerId, this.recipientId, amt, this.method, this.groupId, extraData);
+      try {
+        await store.settleDebt(this.payerId, this.recipientId, amt, this.method, this.groupId, extraData);
 
-      const methodNames = {
-        cash: "Cash",
-        upi: "UPI",
-        card: "Card"
-      };
+        const methodNames = {
+          cash: "Cash",
+          upi: "UPI",
+          card: "Card"
+        };
 
-      UI.showToast(`Recorded payment of ${UI.formatCurrency(amt)} via ${methodNames[this.method] || 'Cash'}!`);
-      this.close();
+        UI.showToast(`Recorded payment of ${UI.formatCurrency(amt)} via ${methodNames[this.method] || 'Cash'}!`);
+        this.close();
+      } catch (err) {
+        alert("Error recording settlement: " + err.message);
+      }
     });
   }
 };

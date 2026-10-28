@@ -1,5 +1,6 @@
 /* ==========================================================================
    Splitwise Web Application - Main Application Controller
+   Connected to SQLite Persistent Backend with Real Auth & Native Pro Tools
    ========================================================================== */
 
 class SplitwiseAppController {
@@ -8,7 +9,7 @@ class SplitwiseAppController {
     this.activeId = null;
   }
 
-  init() {
+  async init() {
     // Initialize Modals
     AddExpenseModal.init();
     SettleUpModal.init();
@@ -18,16 +19,26 @@ class SplitwiseAppController {
     // Attach Top Navbar Events
     this.attachNavbarEvents();
 
+    // Attach Auth Modal Events
+    this.attachAuthEvents();
+
     // Attach Global App Events
     this.attachGlobalEvents();
 
     // Subscribe to state changes for automatic reactive re-renders
     store.subscribe(() => {
+      this.updateUserDisplay();
       this.render();
     });
 
-    // Initial render
-    this.render();
+    // Check existing authentication or prompt login
+    const authenticated = await store.init();
+    if (authenticated) {
+      this.updateUserDisplay();
+      this.render();
+    } else {
+      this.showLoginModal();
+    }
   }
 
   navigateTo(view, id = null) {
@@ -47,6 +58,27 @@ class SplitwiseAppController {
   render() {
     this.renderLeftSidebar();
     this.renderMainView();
+  }
+
+  updateUserDisplay() {
+    const user = store.getCurrentUser();
+    if (!user) return;
+
+    const avatarEl = document.getElementById("navbar-user-avatar");
+    const nameEl = document.getElementById("navbar-user-name");
+    const dropNameEl = document.getElementById("dropdown-user-fullname");
+    const dropEmailEl = document.getElementById("dropdown-user-email");
+
+    const initials = user.initials || (user.name ? user.name.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2) : "U");
+
+    if (avatarEl) {
+      avatarEl.textContent = initials;
+      avatarEl.style.backgroundColor = user.color || "#5bc5a7";
+      avatarEl.style.color = "#ffffff";
+    }
+    if (nameEl) nameEl.textContent = user.name || "User";
+    if (dropNameEl) dropNameEl.textContent = user.name || "User";
+    if (dropEmailEl) dropEmailEl.textContent = user.email || "";
   }
 
   renderLeftSidebar() {
@@ -157,24 +189,28 @@ class SplitwiseAppController {
     // Brand click -> go to dashboard
     const brand = document.querySelector(".navbar-brand");
     if (brand) {
-      brand.addEventListener("click", () => this.navigateTo("dashboard"));
+      brand.addEventListener("click", (e) => {
+        e.preventDefault();
+        this.navigateTo("dashboard");
+      });
     }
 
     // Notifications toggle
     const notifBtn = document.getElementById("btn-toggle-notifications");
     const notifDropdown = document.getElementById("notifications-dropdown");
+    const userDropdown = document.getElementById("user-menu-dropdown");
+
     if (notifBtn && notifDropdown) {
       notifBtn.addEventListener("click", e => {
         e.stopPropagation();
         notifDropdown.classList.toggle("active");
-        userDropdown.classList.remove("active");
+        if (userDropdown) userDropdown.classList.remove("active");
         this.renderNotificationsList();
       });
     }
 
     // User menu toggle
     const userTrigger = document.getElementById("user-menu-trigger");
-    const userDropdown = document.getElementById("user-menu-dropdown");
     if (userTrigger && userDropdown) {
       userTrigger.addEventListener("click", e => {
         e.stopPropagation();
@@ -202,7 +238,7 @@ class SplitwiseAppController {
     const menuCreateGroup = document.getElementById("menu-create-group");
     if (menuCreateGroup) {
       menuCreateGroup.addEventListener("click", () => {
-        userDropdown.classList.remove("active");
+        if (userDropdown) userDropdown.classList.remove("active");
         GroupModal.open();
       });
     }
@@ -210,7 +246,7 @@ class SplitwiseAppController {
     const menuRentCalc = document.getElementById("menu-rent-calc");
     if (menuRentCalc) {
       menuRentCalc.addEventListener("click", () => {
-        userDropdown.classList.remove("active");
+        if (userDropdown) userDropdown.classList.remove("active");
         this.navigateTo("rent-calculator");
       });
     }
@@ -218,37 +254,19 @@ class SplitwiseAppController {
     const menuCharts = document.getElementById("menu-charts");
     if (menuCharts) {
       menuCharts.addEventListener("click", () => {
-        userDropdown.classList.remove("active");
+        if (userDropdown) userDropdown.classList.remove("active");
         this.navigateTo("charts");
       });
     }
 
-    const menuReset = document.getElementById("menu-reset-data");
-    if (menuReset) {
-      menuReset.addEventListener("click", () => {
-        userDropdown.classList.remove("active");
-        if (confirm("Reset demo data back to default sample state?")) {
-          store.resetDemoData();
-          this.navigateTo("dashboard");
-          UI.showToast("Demo data reset to initial seed!");
-        }
-      });
-    }
-
-    // Toggle Login Page View
-    const menuToggleLogin = document.getElementById("menu-toggle-login");
-    const loginWrapper = document.getElementById("login-page-wrapper");
-    if (menuToggleLogin && loginWrapper) {
-      menuToggleLogin.addEventListener("click", () => {
-        userDropdown.classList.remove("active");
-        loginWrapper.classList.add("active");
-      });
-    }
-
-    const closeLoginBtn = document.getElementById("btn-close-login");
-    if (closeLoginBtn && loginWrapper) {
-      closeLoginBtn.addEventListener("click", () => {
-        loginWrapper.classList.remove("active");
+    // Real Logout click
+    const menuLogout = document.getElementById("menu-logout");
+    if (menuLogout) {
+      menuLogout.addEventListener("click", async () => {
+        if (userDropdown) userDropdown.classList.remove("active");
+        await store.logout();
+        UI.showToast("Logged out successfully.");
+        this.showLoginModal();
       });
     }
 
@@ -269,6 +287,129 @@ class SplitwiseAppController {
 
     // Global Search Autocomplete
     this.attachSearchEvents();
+  }
+
+  attachAuthEvents() {
+    const loginTabBtn = document.getElementById("auth-tab-login");
+    const signupTabBtn = document.getElementById("auth-tab-signup");
+    const loginForm = document.getElementById("login-form");
+    const signupForm = document.getElementById("signup-form");
+    const switchToSignupLink = document.getElementById("link-switch-to-signup");
+    const authPrompt = document.getElementById("auth-switch-prompt");
+    const modalTitle = document.getElementById("auth-modal-title");
+
+    const showLogin = () => {
+      if (loginTabBtn) loginTabBtn.classList.add("active");
+      if (signupTabBtn) signupTabBtn.classList.remove("active");
+      if (loginForm) loginForm.classList.remove("hidden");
+      if (signupForm) signupForm.classList.add("hidden");
+      if (modalTitle) modalTitle.textContent = "Log in to Splitwise";
+      if (authPrompt) {
+        authPrompt.innerHTML = `Don't have an account? <a id="link-switch-to-signup">Sign up</a>`;
+        const newLink = document.getElementById("link-switch-to-signup");
+        if (newLink) newLink.addEventListener("click", showSignup);
+      }
+      this.clearAuthError();
+    };
+
+    const showSignup = () => {
+      if (signupTabBtn) signupTabBtn.classList.add("active");
+      if (loginTabBtn) loginTabBtn.classList.remove("active");
+      if (signupForm) signupForm.classList.remove("hidden");
+      if (loginForm) loginForm.classList.add("hidden");
+      if (modalTitle) modalTitle.textContent = "Create an Account";
+      if (authPrompt) {
+        authPrompt.innerHTML = `Already have an account? <a id="link-switch-to-login">Log in</a>`;
+        const backToLoginLink = document.getElementById("link-switch-to-login");
+        if (backToLoginLink) backToLoginLink.addEventListener("click", showLogin);
+      }
+      this.clearAuthError();
+    };
+
+    if (loginTabBtn) loginTabBtn.addEventListener("click", showLogin);
+    if (signupTabBtn) signupTabBtn.addEventListener("click", showSignup);
+    if (switchToSignupLink) switchToSignupLink.addEventListener("click", showSignup);
+
+    // Login submit
+    if (loginForm) {
+      loginForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        this.clearAuthError();
+        const email = document.getElementById("login-email").value.trim();
+        const password = document.getElementById("login-password").value;
+        const btn = document.getElementById("btn-submit-login");
+
+        try {
+          btn.disabled = true;
+          btn.textContent = "Logging in...";
+          const user = await store.login({ email, password });
+          UI.showToast(`Welcome back, ${user.name}!`);
+          this.hideLoginModal();
+          this.updateUserDisplay();
+          this.navigateTo("dashboard");
+        } catch (err) {
+          this.showAuthError(err.message || "Failed to log in.");
+        } finally {
+          btn.disabled = false;
+          btn.textContent = "Log in";
+        }
+      });
+    }
+
+    // Signup submit
+    if (signupForm) {
+      signupForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        this.clearAuthError();
+        const name = document.getElementById("signup-name").value.trim();
+        const email = document.getElementById("signup-email").value.trim();
+        const password = document.getElementById("signup-password").value;
+        const default_currency = document.getElementById("signup-currency").value || "USD";
+        const upi_id = document.getElementById("signup-upi").value.trim() || undefined;
+        const btn = document.getElementById("btn-submit-signup");
+
+        try {
+          btn.disabled = true;
+          btn.textContent = "Creating account...";
+          const user = await store.register({ name, email, password, default_currency, upi_id });
+          UI.showToast(`Account created! Welcome, ${user.name}!`);
+          this.hideLoginModal();
+          this.updateUserDisplay();
+          this.navigateTo("dashboard");
+        } catch (err) {
+          this.showAuthError(err.message || "Failed to sign up.");
+        } finally {
+          btn.disabled = false;
+          btn.textContent = "Create Account";
+        }
+      });
+    }
+  }
+
+  showAuthError(msg) {
+    const errorBanner = document.getElementById("auth-error-msg");
+    if (errorBanner) {
+      errorBanner.textContent = msg;
+      errorBanner.classList.add("visible");
+    }
+  }
+
+  clearAuthError() {
+    const errorBanner = document.getElementById("auth-error-msg");
+    if (errorBanner) {
+      errorBanner.textContent = "";
+      errorBanner.classList.remove("visible");
+    }
+  }
+
+  showLoginModal() {
+    const modal = document.getElementById("login-page-wrapper");
+    if (modal) modal.classList.add("active");
+  }
+
+  hideLoginModal() {
+    const modal = document.getElementById("login-page-wrapper");
+    if (modal) modal.classList.remove("active");
   }
 
   attachSearchEvents() {
@@ -313,7 +454,7 @@ class SplitwiseAppController {
             <div class="search-result-avatar" style="background:var(--color-teal);">${g.icon || '🏠'}</div>
             <div class="search-result-info">
               <div class="search-result-title">${g.name}</div>
-              <div class="search-result-meta">${g.members.length} members · ${g.type}</div>
+              <div class="search-result-meta">${(g.members || []).length} members · ${g.type}</div>
             </div>
           </div>
         `).join("");
@@ -323,7 +464,7 @@ class SplitwiseAppController {
         html += `<div class="search-section-title">Friends</div>`;
         html += friends.map(f => `
           <div class="search-result-item" data-action="view-friend" data-friend-id="${f.id}">
-            <div class="search-result-avatar" style="background:${f.color};">${f.initials}</div>
+            <div class="search-result-avatar" style="background:${f.color || '#5bc5a7'};">${f.initials || f.name.slice(0, 2).toUpperCase()}</div>
             <div class="search-result-info">
               <div class="search-result-title">${f.name}</div>
               <div class="search-result-meta">${f.email}</div>
@@ -428,11 +569,16 @@ class SplitwiseAppController {
     const inviteBtn = document.getElementById("sidebar-invite-submit");
     const inviteInput = document.getElementById("sidebar-invite-email");
     if (inviteBtn && inviteInput) {
-      inviteBtn.addEventListener("click", () => {
+      inviteBtn.addEventListener("click", async () => {
         const val = inviteInput.value.trim();
         if (val && val.includes("@")) {
-          UI.showToast(`Invitation sent to ${val}!`);
-          inviteInput.value = "";
+          try {
+            await store.addFriend({ email: val, name: val.split("@")[0] });
+            UI.showToast(`Invitation sent and added ${val} to friends!`);
+            inviteInput.value = "";
+          } catch (err) {
+            alert(err.message || "Failed to add friend.");
+          }
         } else {
           alert("Please enter a valid email address.");
         }
@@ -493,13 +639,6 @@ class SplitwiseAppController {
         return;
       }
 
-      // Pro Demo button
-      const proBtn = e.target.closest("#btn-pro-demo");
-      if (proBtn) {
-        UI.showToast("Splitwise Pro trial activated! Enjoy receipt scanning & unlimited charts.");
-        return;
-      }
-
       // Rent calculator link in right sidebar
       const rentLink = e.target.closest("#link-rent-calc");
       if (rentLink) {
@@ -513,6 +652,22 @@ class SplitwiseAppController {
       if (chartLink) {
         e.preventDefault();
         this.navigateTo("charts");
+        return;
+      }
+
+      // Currency converter quick-launcher
+      const currCalc = e.target.closest("#link-currency-calc");
+      if (currCalc) {
+        e.preventDefault();
+        AddExpenseModal.open();
+        return;
+      }
+
+      // All expenses deep search launcher
+      const allExpPro = e.target.closest("#link-all-expenses-pro");
+      if (allExpPro) {
+        e.preventDefault();
+        this.navigateTo("all-expenses");
         return;
       }
 

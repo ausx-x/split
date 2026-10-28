@@ -1,42 +1,75 @@
 /* ==========================================================================
-   Splitwise Central State & Debt Calculation Engine
+   Splitwise Reactive API Client Store
+   Replaces localStorage with Persistent REST API & SQLite Backend
    ========================================================================== */
 
 class SplitwiseState {
   constructor() {
-    this.storageKey = "splitwise_clone_state_v1";
+    this.storageKey = 'splitwise_auth_token';
+    this.token = localStorage.getItem(this.storageKey) || null;
+    this.currentUser = null;
     this.listeners = [];
-    this.currentView = "dashboard"; // 'dashboard' | 'activity' | 'all-expenses' | 'group' | 'friend' | 'charts' | 'rent-calculator'
-    this.activeId = null; // groupId or friendId when viewing a specific group/friend
-    this.state = this.loadState();
+
+    // Cached client state
+    this.state = {
+      dashboard: {
+        totalBalance: 0,
+        youOwe: 0,
+        youAreOwed: 0,
+        friendsYouOwe: [],
+        friendsWhoOweYou: []
+      },
+      friends: [],
+      groups: [],
+      expenses: [],
+      notifications: []
+    };
   }
 
-  loadState() {
+  // --- Core API Fetcher ---
+  async api(endpoint, options = {}) {
+    const url = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+    const headers = {
+      'Content-Type': 'application/json',
+      ...(options.headers || {})
+    };
+
+    if (this.token) {
+      headers['Authorization'] = `Bearer ${this.token}`;
+    }
+
     try {
-      const saved = localStorage.getItem(this.storageKey);
-      if (saved) {
-        return JSON.parse(saved);
+      const res = await fetch(url, {
+        ...options,
+        headers
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        if (res.status === 401 && !endpoint.includes('/api/auth/login') && !endpoint.includes('/api/auth/register')) {
+          this.handleUnauthorized();
+        }
+        throw new Error(data.error || `HTTP ${res.status}: Request failed`);
       }
-    } catch (e) {
-      console.warn("Failed to load state from localStorage, falling back to seed", e);
+
+      return data;
+    } catch (err) {
+      console.error(`API Error on ${url}:`, err);
+      throw err;
     }
-    return JSON.parse(JSON.stringify(DEFAULT_SEED_DATA));
   }
 
-  saveState() {
-    try {
-      localStorage.setItem(this.storageKey, JSON.stringify(this.state));
-    } catch (e) {
-      console.error("Failed to save state to localStorage", e);
-    }
+  handleUnauthorized() {
+    this.token = null;
+    this.currentUser = null;
+    localStorage.removeItem(this.storageKey);
+    const loginModal = document.getElementById('login-page-wrapper');
+    if (loginModal) loginModal.classList.add('active');
     this.notify();
   }
 
-  resetDemoData() {
-    this.state = JSON.parse(JSON.stringify(DEFAULT_SEED_DATA));
-    this.saveState();
-  }
-
+  // --- Subscriptions ---
   subscribe(listener) {
     this.listeners.push(listener);
     return () => {
@@ -45,26 +78,143 @@ class SplitwiseState {
   }
 
   notify() {
-    this.listeners.forEach(fn => fn(this.state));
+    this.listeners.forEach(fn => {
+      try { fn(this.state); } catch (e) { console.error('Listener error:', e); }
+    });
+  }
+
+  // --- Initialization & Boot ---
+  async init() {
+    if (!this.token) {
+      this.handleUnauthorized();
+      return false;
+    }
+
+    try {
+      const res = await this.api('/api/auth/me');
+      this.currentUser = res.user;
+      await this.refreshAll();
+      const loginModal = document.getElementById('login-page-wrapper');
+      if (loginModal) loginModal.classList.remove('active');
+      return true;
+    } catch (err) {
+      this.handleUnauthorized();
+      return false;
+    }
+  }
+
+  // --- Refresh All Entities ---
+  async refreshAll() {
+    if (!this.currentUser) return;
+
+    try {
+      const [dashRes, friendsRes, groupsRes, expensesRes, notifsRes] = await Promise.all([
+        this.api('/api/dashboard'),
+        this.api('/api/friends'),
+        this.api('/api/groups'),
+        this.api('/api/expenses'),
+        this.api('/api/notifications')
+      ]);
+
+      this.state.dashboard = {
+        totalBalance: dashRes.totalBalance || 0,
+        youOwe: dashRes.youOwe || 0,
+        youAreOwed: dashRes.youAreOwed || 0,
+        friendsYouOwe: dashRes.friendsYouOwe || [],
+        friendsWhoOweYou: dashRes.friendsWhoOweYou || []
+      };
+
+      this.state.friends = friendsRes.friends || [];
+      this.state.groups = groupsRes.groups || [];
+      this.state.expenses = expensesRes.expenses || [];
+      this.state.notifications = notifsRes.notifications || [];
+
+      this.notify();
+    } catch (err) {
+      console.error('Failed to refresh data:', err);
+    }
+  }
+
+  // --- Authentication Actions ---
+  async register({ name, email, password, default_currency, upi_id }) {
+    const res = await this.api('/api/auth/register', {
+      method: 'POST',
+      body: JSON.stringify({ name, email, password, default_currency, upi_id })
+    });
+
+    this.token = res.token;
+    this.currentUser = res.user;
+    localStorage.setItem(this.storageKey, this.token);
+    await this.refreshAll();
+
+    const loginModal = document.getElementById('login-page-wrapper');
+    if (loginModal) loginModal.classList.remove('active');
+
+    return res.user;
+  }
+
+  async login({ email, password }) {
+    const res = await this.api('/api/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ email, password })
+    });
+
+    this.token = res.token;
+    this.currentUser = res.user;
+    localStorage.setItem(this.storageKey, this.token);
+    await this.refreshAll();
+
+    const loginModal = document.getElementById('login-page-wrapper');
+    if (loginModal) loginModal.classList.remove('active');
+
+    return res.user;
+  }
+
+  async logout() {
+    try {
+      if (this.token) {
+        await this.api('/api/auth/logout', { method: 'POST' });
+      }
+    } catch (e) {}
+
+    this.handleUnauthorized();
   }
 
   // --- Getters ---
   getCurrentUser() {
-    return this.state.currentUser;
+    return this.currentUser || {
+      id: 'guest',
+      name: 'User',
+      short_name: 'User',
+      email: '',
+      color: '#5bc5a7',
+      default_currency: 'USD'
+    };
   }
 
   getUser(userId) {
-    return this.state.users.find(u => u.id === userId) || {
+    if (this.currentUser && this.currentUser.id === userId) {
+      return this.currentUser;
+    }
+    const friend = this.state.friends.find(f => f.id === userId);
+    if (friend) return friend;
+
+    for (const g of this.state.groups) {
+      const m = g.members && g.members.find(u => u.id === userId);
+      if (m) return m;
+    }
+
+    return {
       id: userId,
-      name: "User",
-      shortName: "User",
-      initials: "U",
-      color: "#999999"
+      name: 'User',
+      short_name: 'User',
+      avatar: null,
+      color: '#999999'
     };
   }
 
   getGroup(groupId) {
-    return this.state.groups.find(g => g.id === groupId);
+    return this.state.groups.find(g => g.id === groupId) || null;
   }
 
   getGroups() {
@@ -72,411 +222,189 @@ class SplitwiseState {
   }
 
   getFriends() {
-    const currentUserId = this.state.currentUser.id;
-    return this.state.users.filter(u => u.id !== currentUserId);
+    return this.state.friends;
   }
 
   getExpenses() {
-    return [...this.state.expenses].sort((a, b) => new Date(b.date) - new Date(a.date));
+    return this.state.expenses;
   }
 
   getExpense(id) {
-    return this.state.expenses.find(e => e.id === id);
+    return this.state.expenses.find(e => e.id === id) || null;
   }
 
-  // --- Real-time Debt Calculation Engine ---
-
-  /**
-   * Calculates pairwise net balance between all users across all expenses,
-   * or optionally filtered by a specific groupId.
-   * Returns a map: { "userA_id": { "userB_id": netAmount (positive means userB owes userA) } }
-   */
-  calculatePairwiseDebts(groupIdFilter = null) {
-    const matrix = {};
-    const users = this.state.users;
-
-    // Initialize pairwise zero balances
-    users.forEach(u1 => {
-      matrix[u1.id] = {};
-      users.forEach(u2 => {
-        if (u1.id !== u2.id) {
-          matrix[u1.id][u2.id] = 0;
-        }
-      });
-    });
-
-    // Process every expense
-    this.state.expenses.forEach(exp => {
-      if (groupIdFilter && exp.groupId !== groupIdFilter) return;
-
-      const payerId = exp.payerId;
-      if (!exp.splits || !Array.isArray(exp.splits)) return;
-
-      exp.splits.forEach(split => {
-        const debtorId = split.userId;
-        const amount = Number(split.amount) || 0;
-
-        if (payerId !== debtorId && matrix[payerId] && matrix[debtorId]) {
-          // Debtor owes Payer this amount
-          matrix[payerId][debtorId] += amount;
-          matrix[debtorId][payerId] -= amount;
-        }
-      });
-    });
-
-    return matrix;
-  }
-
-  /**
-   * Calculates overall net balance summary for current user
-   */
   getUserBalances() {
-    const currentUserId = this.state.currentUser.id;
-    const pairwise = this.calculatePairwiseDebts();
-
-    let youOwe = 0;
-    let youAreOwed = 0;
-    const friendsYouOwe = [];
-    const friendsWhoOweYou = [];
-
-    const currentPairwise = pairwise[currentUserId] || {};
-
-    Object.keys(currentPairwise).forEach(friendId => {
-      const net = currentPairwise[friendId];
-      const friend = this.getUser(friendId);
-
-      // net > 0 means friend owes you
-      // net < 0 means you owe friend
-      if (net > 0.005) {
-        youAreOwed += net;
-        friendsWhoOweYou.push({
-          user: friend,
-          amount: net
-        });
-      } else if (net < -0.005) {
-        const absVal = Math.abs(net);
-        youOwe += absVal;
-        friendsYouOwe.push({
-          user: friend,
-          amount: absVal
-        });
-      }
-    });
-
-    const totalBalance = youAreOwed - youOwe;
-
-    return {
-      totalBalance,
-      youOwe,
-      youAreOwed,
-      friendsYouOwe: friendsYouOwe.sort((a, b) => b.amount - a.amount),
-      friendsWhoOweYou: friendsWhoOweYou.sort((a, b) => b.amount - a.amount)
-    };
+    return this.state.dashboard;
   }
 
-  /**
-   * Returns 1-on-1 net balance between current user and a specific friend
-   */
   getFriendBalance(friendId) {
-    const currentUserId = this.state.currentUser.id;
-    const pairwise = this.calculatePairwiseDebts();
-    return (pairwise[currentUserId] && pairwise[currentUserId][friendId]) || 0;
+    const friend = this.state.friends.find(f => f.id === friendId);
+    return friend ? (friend.balance || 0) : 0;
   }
 
-  /**
-   * Computes simplified group debts using Greedy Min-Cash-Flow matching algorithm.
-   * Simplifies many transactions into the minimal number of payments between members!
-   */
   getSimplifiedGroupDebts(groupId) {
     const group = this.getGroup(groupId);
-    if (!group) return [];
+    if (!group) return { memberBalances: {}, transactions: [] };
 
     const memberBalances = {};
-    group.members.forEach(mId => {
-      memberBalances[mId] = 0;
-    });
+    if (group.members) {
+      group.members.forEach(m => { memberBalances[m.id] = 0; });
+    }
 
-    // Calculate net balance for each member in this group
-    this.state.expenses.forEach(exp => {
-      if (exp.groupId !== groupId) return;
+    const groupExpenses = this.state.expenses.filter(e => e.group_id === groupId);
 
-      const payerId = exp.payerId;
+    groupExpenses.forEach(exp => {
+      const payerId = exp.payer_id;
       const totalAmount = Number(exp.amount) || 0;
 
       if (memberBalances[payerId] !== undefined) {
         memberBalances[payerId] += totalAmount;
       }
 
-      exp.splits.forEach(split => {
-        const mId = split.userId;
-        const splitAmt = Number(split.amount) || 0;
-        if (memberBalances[mId] !== undefined) {
-          memberBalances[mId] -= splitAmt;
-        }
-      });
+      if (exp.splits) {
+        exp.splits.forEach(split => {
+          const mId = split.user_id;
+          const splitAmt = Number(split.amount) || 0;
+          if (memberBalances[mId] !== undefined) {
+            memberBalances[mId] -= splitAmt;
+          }
+        });
+      }
     });
 
-    // Debtors and Creditors lists
     const debtors = [];
     const creditors = [];
 
     Object.keys(memberBalances).forEach(mId => {
-      const bal = memberBalances[mId];
-      if (bal < -0.005) {
-        debtors.push({ userId: mId, amount: Math.abs(bal) });
-      } else if (bal > 0.005) {
-        creditors.push({ userId: mId, amount: bal });
-      }
+      const bal = Number(memberBalances[mId].toFixed(2));
+      memberBalances[mId] = bal;
+      if (bal < -0.005) debtors.push({ userId: mId, amount: Math.abs(bal) });
+      else if (bal > 0.005) creditors.push({ userId: mId, amount: bal });
     });
 
     debtors.sort((a, b) => b.amount - a.amount);
     creditors.sort((a, b) => b.amount - a.amount);
 
-    const transactions = [];
+    const userMap = {};
+    if (group.members) {
+      group.members.forEach(m => { userMap[m.id] = m; });
+    }
 
+    const transactions = [];
     let i = 0;
     let j = 0;
+
     while (i < debtors.length && j < creditors.length) {
       const debtor = debtors[i];
       const creditor = creditors[j];
-      const settledAmount = Math.min(debtor.amount, creditor.amount);
+      const settled = Math.min(debtor.amount, creditor.amount);
 
-      if (settledAmount > 0.005) {
+      if (settled > 0.005) {
         transactions.push({
-          from: this.getUser(debtor.userId),
-          to: this.getUser(creditor.userId),
-          amount: settledAmount
+          from: userMap[debtor.userId] || { shortName: 'Member' },
+          to: userMap[creditor.userId] || { shortName: 'Member' },
+          amount: Number(settled.toFixed(2))
         });
       }
 
-      debtor.amount -= settledAmount;
-      creditor.amount -= settledAmount;
-
+      debtor.amount -= settled;
+      creditor.amount -= settled;
       if (debtor.amount < 0.005) i++;
       if (creditor.amount < 0.005) j++;
     }
 
-    return {
-      memberBalances,
-      transactions
-    };
+    return { memberBalances, transactions };
   }
 
-  // --- Mutations ---
-
-  addExpense(expenseData) {
-    const newExpense = {
-      id: "exp-" + Date.now(),
-      description: expenseData.description || "Expense",
-      category: expenseData.category || "general",
-      amount: Number(expenseData.amount) || 0,
-      currency: expenseData.currency || "USD",
-      date: expenseData.date || new Date().toISOString().split("T")[0],
-      groupId: expenseData.groupId || null,
-      friendId: expenseData.friendId || null,
-      payerId: expenseData.payerId || this.state.currentUser.id,
-      splitType: expenseData.splitType || "equal",
-      splits: expenseData.splits || [],
-      notes: expenseData.notes || "",
-      receipt: expenseData.receipt || null,
-      comments: [],
-      createdAt: new Date().toISOString()
-    };
-
-    this.state.expenses.unshift(newExpense);
-
-    // Add activity record
-    const payer = this.getUser(newExpense.payerId);
-    let groupOrFriendName = "";
-    if (newExpense.groupId) {
-      const grp = this.getGroup(newExpense.groupId);
-      if (grp) groupOrFriendName = ` in ${grp.name}`;
-    }
-
-    this.addNotification({
-      userId: newExpense.payerId,
-      message: `${payer.shortName} added "${newExpense.description}"${groupOrFriendName}`,
-      time: "Just now",
-      unread: false
+  // --- Data Mutations via REST API ---
+  async addExpense(payload) {
+    const res = await this.api('/api/expenses', {
+      method: 'POST',
+      body: JSON.stringify(payload)
     });
-
-    this.saveState();
-    return newExpense;
+    await this.refreshAll();
+    return res;
   }
 
-  updateExpense(id, updatedData) {
-    const idx = this.state.expenses.findIndex(e => e.id === id);
-    if (idx !== -1) {
-      this.state.expenses[idx] = {
-        ...this.state.expenses[idx],
-        ...updatedData
-      };
-      this.saveState();
-      return this.state.expenses[idx];
-    }
-    return null;
-  }
-
-  deleteExpense(id) {
-    const exp = this.getExpense(id);
-    this.state.expenses = this.state.expenses.filter(e => e.id !== id);
-
-    if (exp) {
-      this.addNotification({
-        userId: this.state.currentUser.id,
-        message: `You deleted "${exp.description}"`,
-        time: "Just now",
-        unread: false
-      });
-    }
-
-    this.saveState();
-  }
-
-  /**
-   * Settle debt by creating a settlement transaction
-   */
-  settleDebt(payerId, recipientId, amount, method = "cash", groupId = null, extraData = {}) {
-    const payer = this.getUser(payerId);
-    const recipient = this.getUser(recipientId);
-
-    let defaultNote = `Recorded payment via ${method.toUpperCase()}`;
-    if (method === "upi") {
-      const upiIdStr = extraData.upiId ? ` (${extraData.upiId})` : "";
-      const utrStr = extraData.utr ? ` · Ref/UTR: ${extraData.utr}` : "";
-      defaultNote = `Recorded payment via UPI${upiIdStr}${utrStr}`;
-    } else if (method === "card") {
-      const last4 = extraData.cardLast4 ? ` (ending in ${extraData.cardLast4})` : "";
-      defaultNote = `Recorded payment via Card${last4}`;
-    }
-
-    const settlementExpense = {
-      id: "exp-" + Date.now(),
-      description: `${payer.shortName} paid ${recipient.shortName}`,
-      category: "general",
-      amount: Number(amount),
-      currency: "USD",
-      date: extraData.date || new Date().toISOString().split("T")[0],
-      groupId: groupId,
-      isSettlement: true,
-      payerId: payerId,
-      splitType: "single",
-      splits: [
-        { userId: recipientId, amount: Number(amount) }
-      ],
-      notes: extraData.notes || defaultNote,
-      receipt: extraData.receipt || null,
-      comments: [],
-      createdAt: new Date().toISOString()
-    };
-
-    this.state.expenses.unshift(settlementExpense);
-
-    this.addNotification({
-      userId: payerId,
-      message: `${payer.shortName} paid ${recipient.shortName} $${Number(amount).toFixed(2)} via ${method.toUpperCase()}`,
-      time: "Just now",
-      unread: false
+  async settleDebt(payerId, recipientId, amount, method = 'cash', groupId = null, extraData = {}) {
+    const res = await this.api('/api/settlements', {
+      method: 'POST',
+      body: JSON.stringify({
+        payer_id: payerId,
+        recipient_id: recipientId,
+        amount: Number(amount),
+        method,
+        group_id: groupId,
+        date: extraData.date,
+        upi_id: extraData.upiId,
+        utr: extraData.utr,
+        notes: extraData.notes,
+        receipt: extraData.receipt
+      })
     });
-
-    this.saveState();
-    return settlementExpense;
+    await this.refreshAll();
+    return res;
   }
 
+  async deleteExpense(expenseId) {
+    await this.api(`/api/expenses/${expenseId}`, { method: 'DELETE' });
+    await this.refreshAll();
+  }
 
-  addGroup(groupData) {
-    const newGroup = {
-      id: "group-" + Date.now(),
-      name: groupData.name || "New Group",
-      type: groupData.type || "Other",
-      icon: groupData.icon || "🏠",
-      members: groupData.members || [this.state.currentUser.id],
-      whiteboard: groupData.whiteboard || "Welcome to " + groupData.name + "!"
-    };
-
-    this.state.groups.push(newGroup);
-
-    this.addNotification({
-      userId: this.state.currentUser.id,
-      message: `You created group "${newGroup.name}"`,
-      time: "Just now",
-      unread: false
+  async addGroup(groupData) {
+    const res = await this.api('/api/groups', {
+      method: 'POST',
+      body: JSON.stringify(groupData)
     });
-
-    this.saveState();
-    return newGroup;
+    await this.refreshAll();
+    return res.group;
   }
 
-  addFriend(friendData) {
-    const newFriend = {
-      id: "user-" + Date.now(),
-      name: friendData.name || "Friend",
-      shortName: friendData.name ? friendData.name.split(" ")[0] : "Friend",
-      email: friendData.email || "",
-      avatar: null,
-      initials: friendData.name ? friendData.name.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2) : "F",
-      color: friendData.color || "#3280ea"
-    };
-
-    this.state.users.push(newFriend);
-
-    this.addNotification({
-      userId: this.state.currentUser.id,
-      message: `You added ${newFriend.name} as a friend`,
-      time: "Just now",
-      unread: false
+  async updateWhiteboard(groupId, text) {
+    const res = await this.api(`/api/groups/${groupId}/whiteboard`, {
+      method: 'PUT',
+      body: JSON.stringify({ whiteboard: text })
     });
-
-    this.saveState();
-    return newFriend;
-  }
-
-  addComment(expenseId, commentText) {
-    const exp = this.getExpense(expenseId);
-    if (!exp) return;
-
-    if (!exp.comments) exp.comments = [];
-    const newComment = {
-      id: "c-" + Date.now(),
-      userId: this.state.currentUser.id,
-      text: commentText,
-      createdAt: new Date().toISOString()
-    };
-
-    exp.comments.push(newComment);
-    this.saveState();
-    return newComment;
-  }
-
-  updateWhiteboard(groupId, text) {
     const grp = this.getGroup(groupId);
-    if (grp) {
-      grp.whiteboard = text;
-      this.saveState();
-    }
+    if (grp) grp.whiteboard = text;
+    this.notify();
+    return res;
   }
 
-  addNotification(notif) {
-    if (!this.state.notifications) this.state.notifications = [];
-    this.state.notifications.unshift({
-      id: "notif-" + Date.now(),
-      ...notif
+  async addFriend(friendData) {
+    const res = await this.api('/api/friends/add', {
+      method: 'POST',
+      body: JSON.stringify(friendData)
     });
-    if (this.state.notifications.length > 20) {
-      this.state.notifications.pop();
+    await this.refreshAll();
+    return res.friend;
+  }
+
+  async addComment(expenseId, commentText) {
+    const res = await this.api(`/api/expenses/${expenseId}/comments`, {
+      method: 'POST',
+      body: JSON.stringify({ text: commentText })
+    });
+    const exp = this.getExpense(expenseId);
+    if (exp) {
+      if (!exp.comments) exp.comments = [];
+      exp.comments.push(res.comment);
     }
+    this.notify();
+    return res.comment;
+  }
+
+  async markNotificationsRead() {
+    await this.api('/api/notifications/read', { method: 'PUT' });
+    this.state.notifications.forEach(n => { n.is_read = 1; });
+    this.notify();
   }
 }
 
-// Global instance
+// Global Store Instance
 const store = new SplitwiseState();
 
-if (typeof window !== "undefined") {
+if (typeof window !== 'undefined') {
   window.store = store;
   window.SplitwiseState = SplitwiseState;
 }
-if (typeof globalThis !== "undefined") {
-  globalThis.store = store;
-  globalThis.SplitwiseState = SplitwiseState;
-}
-

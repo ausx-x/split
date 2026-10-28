@@ -3,3 +3,9 @@ rea/
 .env
 .DS_Store
 Thumbs.db
+splitwise.db
+*.db
+*.db-wal
+*.db-shm
+uploads/*
+!uploads/.gitkeep

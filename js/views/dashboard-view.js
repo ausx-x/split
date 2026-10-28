@@ -158,25 +158,26 @@ const DashboardView = {
         </div>
       </div>
 
-      <div class="pro-promo-card">
-        <span class="pro-badge">Splitwise Pro</span>
-        <div class="pro-title">Upgrade to Pro</div>
-        <p class="pro-description">Get receipt scanning, unlimited expense search, currency conversion, and charts.</p>
-        <button class="pro-button" id="btn-pro-demo">Try 30 days free</button>
-      </div>
-
       <div>
         <div class="right-section-title">
-          <span>FAIRNESS CALCULATORS</span>
+          <span>PRO TOOLS (UNLOCKED)</span>
         </div>
         <div class="sidebar-action-links">
-          <a href="#" class="sidebar-action-link" id="link-rent-calc">
-            ${UI.icons.calculator}
-            <span>Rent Split Calculator</span>
-          </a>
           <a href="#" class="sidebar-action-link" id="link-charts-view">
             ${UI.icons.chart}
-            <span>Spending Analytics</span>
+            <span>Spending Analytics & Donut Charts</span>
+          </a>
+          <a href="#" class="sidebar-action-link" id="link-rent-calc">
+            ${UI.icons.calculator}
+            <span>Rent Split Fairness Calculator</span>
+          </a>
+          <a href="#" class="sidebar-action-link" id="link-currency-calc">
+            <span>💱</span>
+            <span>Multi-Currency Converter</span>
+          </a>
+          <a href="#" class="sidebar-action-link" id="link-all-expenses-pro">
+            ${UI.icons.allExpenses}
+            <span>Deep Search & Data Export</span>
           </a>
         </div>
       </div>

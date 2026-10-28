@@ -192,3 +192,148 @@
 .calc-split-row:last-child {
   border-bottom: none;
 }
+
+/* --------------------------------------------------------------------------
+   ADVANCED ANALYTICS (NATIVE PRO)
+   -------------------------------------------------------------------------- */
+.analytics-time-tabs {
+  display: flex;
+  gap: 6px;
+  background-color: var(--color-bg-subtle);
+  border: 1px solid var(--color-border);
+  padding: 3px;
+  border-radius: var(--radius-sm);
+}
+
+.analytics-time-btn {
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  background: transparent;
+  border: none;
+}
+
+.analytics-time-btn.active {
+  background-color: #fff;
+  color: var(--color-teal);
+  font-weight: 700;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+}
+
+.donut-layout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  padding: 12px 0;
+}
+
+.donut-svg-wrap {
+  width: 170px;
+  height: 170px;
+  position: relative;
+}
+
+.donut-svg-wrap svg {
+  transform: rotate(-90deg);
+  border-radius: 50%;
+}
+
+.donut-center-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  pointer-events: none;
+}
+
+.donut-center-total {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--color-text-main);
+  line-height: 1.1;
+}
+
+.donut-center-sub {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.donut-legend-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 180px;
+}
+
+.donut-legend-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  gap: 8px;
+}
+
+.donut-legend-color-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  display: inline-block;
+}
+
+/* Member Share Matrix */
+.matrix-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.matrix-table th, .matrix-table td {
+  padding: 8px 10px;
+  text-align: left;
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.matrix-table th {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  background-color: var(--color-bg-subtle);
+}
+
+.matrix-table tr:hover {
+  background-color: var(--color-bg-hover);
+}
+
+/* Multi-Currency Converter Modal */
+.currency-converter-card {
+  background-color: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+}
+
+.currency-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.currency-symbol-tag {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--color-teal);
+  min-width: 24px;
+}
+

@@ -65,7 +65,7 @@ const GroupModal = {
     this.modalEl.querySelector(".modal-close-btn").addEventListener("click", () => this.close());
     this.modalEl.querySelector("#btn-cancel-group").addEventListener("click", () => this.close());
 
-    this.modalEl.querySelector("#btn-save-group").addEventListener("click", () => {
+    this.modalEl.querySelector("#btn-save-group").addEventListener("click", async () => {
       const nameInput = this.modalEl.querySelector("#new-group-name");
       const name = nameInput.value.trim();
 
@@ -85,16 +85,20 @@ const GroupModal = {
         selectedIds.push(cb.value);
       });
 
-      const newGrp = store.addGroup({
-        name,
-        type,
-        icon: iconMap[type] || "🏠",
-        members: selectedIds
-      });
+      try {
+        const newGrp = await store.addGroup({
+          name,
+          type,
+          icon: iconMap[type] || "🏠",
+          members: selectedIds
+        });
 
-      UI.showToast(`Group "${newGrp.name}" created!`);
-      this.close();
-      window.SplitwiseApp.navigateTo("group", newGrp.id);
+        UI.showToast(`Group "${newGrp.name}" created!`);
+        this.close();
+        window.SplitwiseApp.navigateTo("group", newGrp.id);
+      } catch (err) {
+        alert("Error creating group: " + err.message);
+      }
     });
   }
 };
@@ -121,23 +125,27 @@ const FriendModal = {
     this.modalEl.querySelector(".modal-close-btn").addEventListener("click", () => this.close());
     this.modalEl.querySelector("#btn-cancel-friend").addEventListener("click", () => this.close());
 
-    this.modalEl.querySelector("#btn-save-friend").addEventListener("click", () => {
+    this.modalEl.querySelector("#btn-save-friend").addEventListener("click", async () => {
       const nameInp = this.modalEl.querySelector("#new-friend-name");
       const emailInp = this.modalEl.querySelector("#new-friend-email");
 
       const name = nameInp.value.trim();
       const email = emailInp.value.trim();
 
-      if (!name) {
-        alert("Please enter friend's name.");
-        nameInp.focus();
+      if (!email) {
+        alert("Please enter friend's email address.");
+        emailInp.focus();
         return;
       }
 
-      const newFriend = store.addFriend({ name, email });
-      UI.showToast(`Added ${newFriend.name} as a friend!`);
-      this.close();
-      window.SplitwiseApp.navigateTo("friend", newFriend.id);
+      try {
+        const newFriend = await store.addFriend({ name: name || email.split('@')[0], email });
+        UI.showToast(`Added ${newFriend.name} as a friend!`);
+        this.close();
+        window.SplitwiseApp.navigateTo("friend", newFriend.id);
+      } catch (err) {
+        alert("Error adding friend: " + err.message);
+      }
     });
   }
 };

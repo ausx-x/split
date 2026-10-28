@@ -298,14 +298,145 @@
   margin-bottom: 14px;
 }
 
-.field-label {
+/* Itemized Bill Splitter (Native Pro) */
+.itemized-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.itemized-header {
   font-size: 11px;
   font-weight: 700;
-  text-transform: uppercase;
   color: var(--color-text-muted);
-  margin-bottom: 4px;
-  display: block;
+  text-transform: uppercase;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
+
+.itemized-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 220px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.itemized-row {
+  background-color: var(--color-bg-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.itemized-main-inputs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.itemized-name-input {
+  flex: 1;
+  font-size: 13px;
+  padding: 4px 8px;
+}
+
+.itemized-price-input {
+  width: 80px;
+  text-align: right;
+  font-size: 13px;
+  padding: 4px 8px;
+}
+
+.itemized-remove-btn {
+  color: var(--color-red);
+  cursor: pointer;
+  padding: 2px 6px;
+  font-size: 16px;
+}
+
+.itemized-participants {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding-top: 4px;
+  border-top: 1px dashed var(--color-border-subtle);
+}
+
+.itemized-participant-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  background: #fff;
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+  user-select: none;
+}
+
+.itemized-participant-chip.active {
+  background-color: var(--color-teal-light);
+  border-color: var(--color-teal);
+  color: var(--color-teal-dark);
+  font-weight: 600;
+}
+
+.itemized-tax-tip-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.itemized-summary-box {
+  background: #fff;
+  border: 1px solid var(--color-teal-border);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  font-size: 12px;
+}
+
+/* Receipt Scanner Button & Pill */
+.ocr-scan-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  background-color: var(--color-teal-light);
+  color: var(--color-teal-dark);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  border: 1px solid var(--color-teal-border);
+  transition: all var(--transition-fast);
+}
+
+.ocr-scan-btn:hover {
+  background-color: var(--color-teal);
+  color: #fff;
+}
+
+.currency-convert-badge {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  background: var(--color-bg-subtle);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+}
+
 
 .expense-field-input {
   width: 100%;
